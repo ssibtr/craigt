@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2018-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+
+<odoo>
+    <data>
+        <!-- GROUPS SHOULD BE SIDE BY SIDE AND EACH HAVE A HEADING -->
+        <!-- GROUPS WITHIN GROUPS WITH LABELS -->
+        <!-- PARTNER PAGE SALES AND PURCHASE STUDIO TO SEE IT STRAIGHT FORWARD -->
+        <record id="ssi_leads_first_form" model="ir.ui.view">
+            <field name="name">ssi.ssi_leads_first_form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='extra']" position="after">
+                    <!-- <notebook> -->
+                        <page string="ASHER">
+                            <group>
+                                <group string="Focus - Elite Salespeople Focus on a Few Top Prospects">
+                                    <field name="l_prospect_fits_our_ideal_customer_group"/>
+                                    <field name="l_prospect_has_critical_or_urgent_need"/>
+                                    <field name="l_we_have_solution_to_satisfy_the_need"/>
+                                    <field name="l_we_have_a_coach_in_or_close_to_company"/>
+                                    <field name="l_solving_this_need_is_in_their_budget"/>
+                                    <field name="l_revenues_and_margins_are_sufficient"/>
+                                </group>
+                                <group string="Research - Elite Salespeople Know Their Prospects And Business">
+                                    <field name="l_annual_revenue"/>
+                                    <field name="l_no_of_employees"/>
+                                    <field name="l_industry"/>
+                                    <field name="l_website"/>
+                                    <field name="l_buyer_role"/>
+                                    <field name="l_description"/>
+                                    <field name="l_prospect_linkedin"/>
+                                    <field name="l_linkedin_company"/>
+                                    <field name="l_products_they_sell"/>
+                                    <field name="l_markets_they_serve"/>
+                                    <field name="l_competitors"/>
+                                </group>
+                            </group>
+                            <group  string="Coaches and Personalities - Elite Salespeople Leverage 80/20 Rules">
+                                <field name="l_this_prospect_will_be_our_coach"/>
+                                <field name="l_personality_type"/>
+                                <field name="l_personality_type_matched_mirrored"/>
+                            </group>
+                        </page>
+                    <!-- </notebook> -->
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="ssi_opportunities_first_form" model="ir.ui.view">
+            <field name="name">ssi.ssi_opportunities_first_form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='lead']" position="after">
+                    <!-- <notebook> -->
+                        <page string="ASHER">
+                            <group>
+                                <group  string="Focus - Elite Salespeople Focus on a Top Few Opportunities">
+                                    <field name="o_prospect_fits_our_ideal_customer_group"/>
+                                    <field name="o_prospect_has_critical_or_urgent_need"/>
+                                    <field name="o_we_have_solution_to_satisfy_the_need"/>
+                                    <field name="o_we_have_a_coach_in_or_close_to_company"/>
+                                    <field name="o_solving_this_need_is_in_their_budget"/>
+                                    <field name="o_revenues_and_margins_are_sufficient"/>
+                                </group>
+                                <group  string="Coaches and Personalities - Elite Salespeople Leverage 80/20 Rules">
+                                    <field name="o_this_prospect_will_be_our_coach"/>
+                                    <field name="o_personality_type"/>
+                                    <field name="o_key_buyers_researched"/>
+                                    <field name="o_personality_type_matched_mirrored"/>
+                                </group>
+
+                            </group>
+                            <group>
+                                <group string="Rapport - Elite Salespeople Sell Themselves By Building Rapport">
+                                    <field name="o_bought_me"/>
+                                    <field name="o_bought_our_company"/>
+                                    <field name="o_bought_our_price"/>
+                                    <field name="o_bought_this_opportunity"/>
+                                    <field name="o_bought_a_timeframe"/>
+                                </group>
+                                <group string="Marketing Mesages - Elite Salespeople Share Why (Us, Now, Not Competition)">
+                                    <field name="o_killer_argument_delivered"/>
+                                    <field name="o_key_discriminators_delivered"/>
+                                    <field name="o_ghosting_discriminators_delivered"/>
+                                    <field name="o_roi_type_determined"/>
+                                    <field name="o_roi_story_delivered"/>
+                                    <field name="o_testimonials_delivered"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Business Consultant - Elite Salepeople Offer Solutions, Overcome Objections">
+                                    <field name="o_highest_needs_determined"/>
+                                    <field name="o_buyers_understand_value_of_offering"/>
+                                    <field name="o_buyer_requirements_summarized"/>
+                                    <field name="o_cited_the_gain"/>
+                                    <field name="o_cited_three_offerings_or_less"/>
+                                    <field name="o_objections_addressed"/>
+                                </group>
+                                <group string="Closing - Elite Salepeople Recognize The Buyer's Shift, Ask For The Sale">
+                                    <field name="o_recognized_buyers_shift"/>
+                                    <field name="o_asked_for_the_sale"/>
+                                    <field name="o_closing_approach_used"/>
+                                    <field name="o_confirmed_the_sale"/>
+                                </group>
+                            </group>
+                            
+                        </page>
+                    <!-- </notebook> -->
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="project_manager"/>
+                    <field name="customer_category"/>
+                </xpath>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

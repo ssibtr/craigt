@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2018-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+
+<odoo>
+    <data>
+
+        <record id="ssi_contact_first_form" model="ir.ui.view">
+            <field name="name">ssi.ssi_contact_first_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="type">form</field>
+            <field name="priority" eval="18"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='sales_purchases']" position="after">
+                    <!-- <notebook> -->
+                        <page string="ASHER"  attrs="{'invisible':[('customer', '=', True)]}">
+                            <group>
+                              <group string="Focus - Elite Salespeople Focus on a Few Top Contacts">
+                                  <field name="c_contact_fits_our_ideal_customer_group"/>
+                                  <field name="c_contact_has_critical_or_urgent_need"/>
+                                  <field name="c_solving_this_need_is_in_their_budget"/>
+                                  <field name="c_we_have_solution_to_satisfy_the_need"/>
+                              </group>
+                              <group string="Reasearch - Elite Salespeople Know Their Contacts">
+                                  <field name="c_department"/>
+                                  <field name="c_reports_to"/>
+                                  <field name="c_description"/>
+                                  <field name="c_contact_linkedin"/>
+                                  <field name="c_buyer_role"/>
+                              </group>
+                            </group>
+                            <group>
+                                <group string="Coaches and Personalities - Elite Salespeople Leverage 80/20 Rules">
+                                    <field name="c_this_prospect_will_be"/>
+                                    <field name="c_personality_type"/>
+                                </group>
+                                <group string="Referrals - Elite Salespeople Always Ask For And Pursue Referrals">
+                                    <field name="c_who"/>
+                                    <field name="c_introduce_us"/>
+                                    <field name="c_referal_pursued"/>
+                                    <field name="c_referal_type"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="ASHER" attrs="{'invisible':[('customer', '=', False)]}">
+                            <group>
+                                <group string="Research - Elite Salespeople Know Each Business">
+                                    <field name="a_annual_revenue"/>
+                                    <field name="a_employees"/>
+                                    <field name="a_website"/>
+                                    <field name="a_industry"/>
+                                    <field name="a_description"/>
+                                    <field name="a_linkedin_company"/>
+                                    <field name="a_products_they_sell"/>
+                                    <field name="a_markets_they_serve"/>
+                                    <field name="a_our_competition"/>
+                                </group>
+                                <group string="Customers  - Elite Salespeople Build Long-Term Relationships">
+                                    <field name="a_company_goals"/>
+                                    <field name="a_what_do_we_do_well"/>
+                                    <field name="a_what_can_we_do_better"/>
+                                    <field name="a_what_are_your_current_needs"/>
+                                    <field name="a_what_are_your_future_requirements"/>
+                                    <field name="a_net_promoter_score"/>
+                                </group>
+                            </group>
+                        </page>
+                    <!-- </notebook> -->
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='purchase']/field[@name='supplier']" position="after">
+                    <field name="vendor_1099"/>
+                    <field name="opened_date"/>
+                    <field name="ach_email"/>
+                    <field name="ach_email_alt"/>
+                    <field name="coi_expiration_date"/>
+                </xpath>
+                <xpath expr="//field[@name='mobile']" position="after">
+                    <field name="fax"/>
+                </xpath>
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field name="exemption_certificate_date"/>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']/field[@name='user_id']" position="after">
+                    <field name="project_manager_id"/>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="customer_category"/>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']/field[@name='customer']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='purchase']/field[@name='supplier']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ssi_contact_first_acct_form" model="ir.ui.view">
+            <field name="name">ssi.ssi_contact_first_acct_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="priority" eval="20"/>
+            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='sale']/field[@name='customer']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='purchase']/field[@name='supplier']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                  <xpath expr="//field[@name='child_ids']" position="attributes">
+                    <attribute name="context">"{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_lang': lang, 'default_user_id': user_id}"</attribute>
+                  </xpath>
+            </field>
+        </record>
+
+        <record id="ssi_res_partner_kanban_view" model="ir.ui.view">
+            <field name="name">ssi.ssi_res_partner_kanban_view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+            <field name="type">kanban</field>
+            <field name="arch" type="xml">
+              <xpath expr="//kanban[1]/templates[1]/t[1]/div[1]/div[1]/strong[1]" position="after">
+                <field display="full" name="ref"/>
+              </xpath>
+            </field>
+        </record>
+
+        <record id="ssi_contact_search_view" model="ir.ui.view">
+            <field name="name">ssi.ssi_contact.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <filter name="customer" position="replace">
+                   <filter string="Customers" name="customer" domain="[('customer','=',True)]"/>
+                </filter>
+            </field>
+        </record>
+
+    </data>
+</odoo>
