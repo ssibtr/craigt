@@ -1,7 +1,7 @@
 <odoo>
   <data>
     <!-- explicit list view definition -->
-    
+    <!--
     <record model="ir.ui.view" id="my_module.list">
       <field name="name">my_module list</field>
       <field name="model">my_module.my_module</field>
@@ -13,7 +13,7 @@
           <filed name="start_datetime"/>
         </tree>
       </field>
-    </record>
+    </record> -->
    
 
     <!-- actions opening views on models -->
