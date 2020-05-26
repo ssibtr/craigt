@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wishlist_public_all,wishlist_name_all,model_wishlist_name,base.group_public,1,0,0,0
+access_wishlist_portal_all,wishlist_name_all,model_wishlist_name,base.group_portal,1,1,1,1
+access_wishlist_portal_all_1,website_wishlist_all,model_website_wishlist,base.group_portal,1,1,1,1
+access_wishlist_name_manager,wishlist_name_manager,model_wishlist_name,base.user_root,1,1,1,1

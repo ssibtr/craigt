@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <record id="ssi_sale_report_saearch" model="ir.ui.view">
+        <field name="name">ssi.sale_report_search</field>
+        <field name="model">sale.report</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="sale.view_order_product_search"/>
+            <field name="arch" type="xml">
+              <xpath expr="//filter[@name='Sales']" position="after">
+                <filter string="Confirmed Last Year" name="confirm_last_year" domain="[('confirmation_date', '&gt;=', (context_today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d'))]"/>
+              </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

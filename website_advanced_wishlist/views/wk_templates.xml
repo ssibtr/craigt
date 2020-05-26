@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2018-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+
+<odoo>
+    <data>
+        
+        <template id="assets_frontend_wishlist" inherit_id="website.assets_frontend" name="Wishlist">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/website_advanced_wishlist/static/src/css/wk_wishlist.css"/>
+                <script type="text/javascript" src="/website_advanced_wishlist/static/src/js/wk_wish_list.js"/>
+            </xpath>
+        </template>
+        <!-- Adding WISHLIST MENU -->
+        <template id="header" inherit_id="website.layout" name="Header Shop My Cart Link" >
+            <xpath expr="//header//ul[@id='top_menu']/li[1]" position="replace">
+                <t t-set="is_user_public" t-value="website.env.user == request.website.user_id"/>
+                <t t-if="not is_user_public">
+                
+                    <li class="nav-item">
+                        <a id="my_wishlist" href="/wishlists/"  class="nav-link" >
+                            <i class="fa fa-heart"></i>
+                            Wishlists 
+                        </a>
+                    </li>
+                </t>
+            </xpath>
+        </template>
+        <!-- Inserting wishlist heart icon to products(shop page) page -->
+        <template id="add_to_wishlist" inherit_id="website_sale.products_item" active="True" customize_show="True" name="Wishlist" priority="20">
+            <xpath expr="//div[hasclass('product_price')]" position="inside">
+                <t t-set="is_user_public" t-value="website.env.user == request.website.user_id"/>
+                <t t-if="not is_user_public">
+                    <t t-set="add_to_wishlist_action" t-value="request.env['ir.config_parameter'].sudo().get_param(('website_wishlist.add_to_wishlist_action'), default=False)"/>
+                    <t t-if=" not add_to_wishlist_action=='default'">    
+                        <t t-set="in_wish" t-value="product.product_variant_ids &amp; request.env['website.wishlist'].current().mapped('product_id')"/>
+                        <span t-att-class="'add_to_wishlist_heart_icon black_heart_icon ' if not in_wish else 'add_to_wishlist_heart_icon white_heart_icon'" title="Add to Wishlist"  t-att-data-product-product-id="product.product_variant_ids[0].id" data-action="o_wishlist" data-trigger="focus"></span>       
+                    </t>
+                    <t t-if="add_to_wishlist_action=='default'">
+                        <t t-set="default_wishlist" t-value="request.env['wishlist.name'].get_default_wishlist()"/>
+                        <t t-set="id" t-value="default_wishlist.id if default_wishlist else -1"/>
+                        <t t-set="in_wish" t-value="product.product_variant_ids &amp; request.env['website.wishlist'].search([('wishlist_name_id','=',id)]).mapped('product_id')"/>
+                        <span t-att-class="'add_to_wishlist_heart_icon black_heart_icon ' if not in_wish else 'add_to_wishlist_heart_icon white_heart_icon'" t-att-title="'Add to Wishlist' if not in_wish else 'Remove from wishlist'"  t-att-data-product-product-id="product.product_variant_ids[0].id" data-action="o_wishlist" data-trigger="focus"></span>       
+                        <span t-if="len(product.product_variant_ids)>0" t-att-id="'added_to_default_wishlist_%s' %(product.product_variant_ids[0].id)"  class="added_to_default_status" ><span>&#160;</span><span>Added to</span> '<span> <t t-if="default_wishlist" t-esc="default_wishlist.name if len(default_wishlist.name) &lt; 15 else default_wishlist.name[:15]+'...'" /> </span>'</span>
+                    </t>
+
+                </t>
+            </xpath>
+        </template>
+
+
+        <!-- Inserting wishlist popup to product page -->
+        <template id= "website_sale_products_inherit" inherit_id="website_sale.products">
+            <xpath expr="//div[@id='wrap']" position="inside">
+                <t t-set="is_user_public" t-value="website.env.user == request.website.user_id"/>
+                <t t-if="not is_user_public">
+                    <t t-call="website_advanced_wishlist.wishlist_popover"/>
+                </t>
+            </xpath>
+        </template>
+        <!-- updating wishlist varient change input 'name' attribute -->
+        <template id= "website_wishlist_attribute_inherit" inherit_id="website_wishlist.wishlist_variants">
+            <xpath expr="//input[@type='radio']" position="attributes">
+                <attribute name='t-att-name'>'attribute-%s-%s-%s' % (product.id, variant_id.attribute_id.id,wishlist.id)</attribute>
+            </xpath>
+        </template>
+         <!-- Product page template -->
+        <template id="website_advanced_wishlist" inherit_id="website_sale.product">
+            <xpath expr="//div[@class='wishlist-box']" position="replace">
+                <t t-set="is_user_public" t-value="website.env.user == request.website.user_id"/>
+                <t t-if="not is_user_public">
+                    <div class="wishlist-box">
+                       <t t-set="in_wish" t-value="product.product_variant_ids &amp; request.env['website.wishlist'].current().mapped('product_id')"/>
+                        <input type="hidden" class="product_ids_in_wish" name="products_in_wish_list" t-att-value="in_wish.ids if in_wish.ids else [0,]"/>
+                        
+                        <div  title = "Add to default wishlist" t-att-class="'add_to_wishlist_button btn btn-default' if not in_wish else 'add_to_wishlist_button btn btn-default added_to_wishlist'"  >   
+                            <span t-att-class="'red_heart_icon' if in_wish else 'blank_heart_icon'" >  &#160;&#160;&#160;</span>
+                            <t t-set="status" t-value="'Add to wishlist'if not in_wish else 'Added to wishlist'"/>
+                            <span class="product_status" ><t t-esc="status"/></span>
+                        </div>
+                        <div class="add_to_wishlist_dropdown btn btn-default" title=" view wishlist" >
+                            <span class="fa fa-chevron-down"></span>
+                        </div>
+                     </div>
+                </t>
+            </xpath>
+            <xpath expr="//div[@id='product_details']" position ="inside">
+                <t t-set="default_wishlist" t-value="request.env['wishlist.name'].get_default_wishlist()"/>
+                <div class="product_page_status" t-if="default_wishlist" ><span> &#160;&#160;</span> Added to "<span><t t-esc="default_wishlist.name if len(default_wishlist.name) &lt; 15 else default_wishlist.name[:15]+'...'" /></span>"</div>        
+            </xpath>
+            <xpath expr="//div[@id='product_details']" position="inside"> 
+                    <t t-call="website_advanced_wishlist.wishlist_popover"/>
+            </xpath>
+        </template>
+
+
+        <template id="wishlist_popover">
+            <div class="wishlist_popover">
+                <t t-set="wishlists" t-value="request.env['wishlist.name'].get_wishlists()"/> 
+                <div id="wishlist_popover_header">  
+                    <p>Add Product To Wishlist</p>
+                    <span   class="close modal-cross wishlist_popover_close" data-dismiss="modal" title="close"> &#160;&#160;&#160;</span>
+                </div>
+                                            
+                <div >
+                    <div class= "wishlist_popover_wishlists" >
+                        
+                    </div>
+                    </div>
+                <div class="wishlist_popover_footer">
+                    <div>
+                        <div id="create_wishlist_link">
+                                <span>   </span>
+                                <span>Create WishList</span>
+                        </div>
+                        <div id="wishlist_inputs">
+                            <input  id = "wishlist_input" class="wishlist_input_normal form-control popover_input"  type = "text"  placeholder = "Give wishlist a name" required = "True" />
+                    
+                            <span id = "create_wishlist_button"   class="btn btn-primary" >
+                                Create 
+                            </span>
+                            
+                            <a  id ="cancle_wishlist_button" class="pull-right modal_cancle " >Cancel</a>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </template>
+
+        <template id = "create_wishlists">
+            <table class="table" style="margin-bottom:0px;">
+                <tbody >
+                <t t-foreach="wishlists" t-as="wishlist" >
+                    <t t-set="product_id_list" t-value="[product.product_id.id for product in wishlist.wishlist_line_ids]"/>
+                    <tr style ="padding-top:5px padding-bottom:5px;" t-att-name_id = "wishlist.id">
+                        <td class="col-xs-8" style="padding-right:0px;padding-left:0px;" >
+                            <a t-att-href="'/wishlists/?name_id=%s'%(wishlist.id)"><p id="popover_wishlist_name" class="popover_wishlist_name" t-att-name_id="wishlist.id" ><t t-esc="wishlist.name"/></p></a>
+                            
+                                <p t-att-id="'wishlist_product_count_%s'%(wishlist.id)"><t t-esc="len(wishlist.wishlist_line_ids)"/> Product(s)</p>
+                        </td>
+                        <td class="col-xs-2" style="padding-left:0px;padding-right:0px;vertical-align: middle;">
+                            <p t-att-id="'wishlist_added_status_%s'%(wishlist.id)" t-att-class="''if int(product_id) in product_id_list else 'hidden'" style="color:green;font-size:10px;">ADDED!</p>
+                        </td>
+                        <td class="col-xs-2" style="padding:7px;padding-right:0px;vertical-align: middle;">
+                            <span t-att-title="'Add To Wishlist' if not int(product_id) in product_id_list else 'Remove from wishlist'" t-att-class="'black_heart_icon add_product_to_wishlist' if not int(product_id) in product_id_list  else 'white_heart_icon remove_from_wishlist'" t-att-name_id = "wishlist.id"></span>
+                        </td>
+                    </tr>
+                </t>
+                </tbody>
+            </table>
+        </template>
+
+        <template id="wishlists_page" name="wishlists_page">
+            <t t-call="website.layout">
+            
+                <div class="container oe_website_sale">
+                    <div id="wishlists_menu_header">
+                        <div class="row mr0 ml0">                        
+                            <h1 class="col-4 ">My Wishlists</h1>
+                            
+                            <div class="col-6 wishlist_notify_save pl-0 pr-0">
+                                <p id="wishlist_notify_save" class="alert alert-success ">
+                                    <strong>Success! </strong>Wishlist Saved.
+                                </p>
+                                <p id="wishlist_notify_warning" class="alert alert-warning ">
+                                    <strong>Warning! </strong> warning
+                                </p>
+                            </div>
+                            <div class="col-2 create_new_wishlist_button" >
+                                <span id = "create_new_wishlist" class="btn btn-primary"  style="float:right;" data-toggle="modal" data-target="#create_wishlist_modal">
+                                    <span>  </span> Create Wishlist 
+                                </span>
+                            </div>
+                        </div>  
+                    </div>
+                    <div id="wishlist_tab_view_container" class="row ml0 mr0">
+                        <t t-call="website_advanced_wishlist.wishlists_tab_view"/> 
+                    </div>
+
+                </div>
+            </t>
+        </template>
+        <template id="wishlists_tab_view">
+            <t t-call="website_advanced_wishlist.create_wishlist_modal"/>
+            <t t-call="website_advanced_wishlist.edit_wishlist_modal"/>
+            <t t-call="website_advanced_wishlist.warning_wishlist_modal"/>
+            <div  t-if="not wishlists" class="well well-lg">
+                        No Wishlist(s) in your Wishlists!
+            </div>
+            <div class=" col-xs-hidden col-sm-3 col-md-3 col-lg-3  tab_menu "  t-if="wishlists">
+                <t t-foreach='wishlists' t-as="wishlist">
+                    <div t-att-class="'wishlist_tap row ml0 mr0 'if not selected_wishlist_id == wishlist.id else 'wishlist_tap_selected  row ml0 mr0 wishlist_tap'" t-att-name_id="wishlist.id" t-att-id = "'wishlist_tab_link_%s' %(wishlist.id)">
+                       <div class="col-1 pl-0 pr-0" style="text-align:center">
+                            <span t-att-id = "'wishlist_default_dot_%s' %(wishlist.id)" t-att-style="'visibility:visible;' if wishlist.is_default else 'visibility:hidden;'"  class="wishlist_default_dot"> &#160;&#160;&#160;&#160;</span>
+                       </div>
+                       <div class="col-9 pl-0 pr-0"   >
+                            <p  class="tab_menu_wishlist_name" >
+                                <span t-att-id = "'tab_menu_wishlist_name_%s' %(wishlist.id)"><t t-esc="wishlist.name if len(wishlist.name) &lt; 20 else wishlist.name[:20]+'...'"/></span>
+                            </p>
+                            <p class="tab_menu_product_count" t-att-id="'tab_menu_product_count_%s' %(wishlist.id)"><t t-esc="len(wishlist.wishlist_line_ids)"/> Product(s)</p>
+                        </div>
+                        <div class="col-2 wishlist_tab_menu_icon" t-att-name_id="wishlist.id">
+                            <span class="pull-right"  >    </span>
+                        </div>
+                    </div>   
+                </t>
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 tabcontent" t-if="wishlists">
+                <t t-foreach="wishlists" t-as="wishlist">  
+                    <t t-call="website_advanced_wishlist.tabcontent"/>   
+                </t>
+                <div class="wishlist_tab_menu">
+                    <div style="padding:5px 0px 5px 0px;">
+                        <div id="wishlist_edit_menu"><span >Edit</span></div>
+                        <div id="move_wishlist_to_cart"><span>Move wishlist to Cart</span></div>
+                        <div id="make_it_default_menu"><span>Make it Default</span>  </div>
+                        <div id="delete_wishlist_menu" data-toggle="modal" data-target="#warning_wishlist_modal"><span>Delete Wishlist</span></div>
+                    </div>
+                </div>
+            </div>
+ 
+        </template>
+        <template id="tabcontent" name="TabContent">
+            <div  t-att-id = "'wishlist_tab_content_%s' %(wishlist.id)"  t-att-name_id = "wishlist.id" t-att-class="'wishlist_tab_content' if selected_wishlist_id == wishlist.id else 'hidden wishlist_tab_content'" >     
+                <div  class="row mr0 ml0 wishlist_tab_content_header">
+                    <div class="col-sm-7 pr-0 pl-0">
+                        <h3 t-att-id="'wishlist_products_header_%s' %(wishlist.id)">
+                            <t t-esc="wishlist.name"/>  
+                            
+                        </h3>
+                        <span  t-att-id="'Wishlist_default_icon_%s' %(wishlist.id)" class="Wishlist_default_icon" t-att-style="'visibility:visible;' if wishlist.is_default else 'visibility:hidden;'"><span>Default</span></span>
+                        <div >
+                            <p class=" mb0 tab_menu_product_count" t-att-id="'wishlist_header_product_count_%s'%(wishlist.id)"><t t-esc="len(wishlist.wishlist_line_ids)" style="display:inline-block;"/> Product(s)</p>
+                                
+                        </div>
+                    </div>
+                    <div class="col-sm-3 pl-0 ">
+                    </div>
+                    <div class="col-sm-2 wishlist_header_menu_icon">
+                        <span t-att-name_id="wishlist.id" > &#160; &#160;&#160;&#160; </span>
+                    </div>
+                </div>                   
+                <div class ="wishlist_tab_content_body" >
+                    <t t-call="website_advanced_wishlist.wishlist_products"/>
+                </div>
+            </div>
+        </template> 
+
+        <template id="wishlist_products" >
+            <t t-set="wishlist_products" t-value="wishlist.wishlist_line_ids"/>         
+            <div t-if="not wishlist_products" class="alert alert-info">
+                    No Product(s) in your Wishlist!
+            </div>
+            <table class='table table-condensed table-borderless' id="wishlist_products" t-if="wishlist_products">
+                <thead>
+                    <tr >
+                        <th class="">PRODUCT INFO</th>
+                        <th class="w-50"></th>
+                        <th class="col-md-2">VARIANTS</th>
+                        <th class="col-md-2" >PRICE</th>
+                        <th class="col-md-2">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody >
+                    <t t-foreach="wishlist_products" t-as="line">
+                    <tr class="wk_wishlist_row js_product">
+                        
+                        <td class=" pl-0 " align="left" >
+                            <div   align="middle" class="table_data_image" t-field="line.product_id.image_small" t-options='{"widget": "image", }'/>
+                        </td>
+                        
+
+                        <td class="pl-0" t-if="line.product_id.product_tmpl_id">
+                            <div style="position:relative;min-height: 100px;">
+                                <div>
+                                    <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                        <strong t-esc="line.product_id.name"/>
+                                    </a>
+                                </div>
+                                <div style="min-height:60px;">
+                                    <p class="text-muted font" t-esc="line.product_id.description_sale"/>
+                                </div>
+                                <div>
+                                    <span  title ="Remove From Wishlist" class="remove_from_wishlist_icon" t-att-name_id="wishlist.id"  t-att-product_id="'%s' % line.product_id.id" t-att-last="line_last"><i style="text-decoration: none;"> &#160;&#160;&#160;</i>Remove</span>
+                               
+				                </div>
+                            </div>
+                        </td>
+                        <td class=" product_variants" name="variants" >
+                            <div class="wishlist_js_product" t-if="line.product_id.product_variant_ids">
+                                <t t-placeholder="select">
+                                    <t t-set="product" t-value="line.product_id"/>
+                                    <input type="hidden" class="product_id" name="product_id" t-att-value="line.product_id.id" />
+                                    <input type="hidden" class="product_template_id" name="product_template_id" t-att-value="product.product_tmpl_id.id"/>
+
+                                    <t t-call="website_wishlist.wishlist_variants">
+                                        <t t-set="ul_class" t-value="'nav-stacked'" />
+                                        
+                                    </t>
+                                </t>
+                            </div>
+                        </td>
+                        <td class="col-2" name="price">
+                            <t t-set="product" t-value="line.product_id"/>   
+                            <div itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer" class="product_price mt16">
+                                <h5 class="oe_price_h4 css_editable_mode_hidden">
+                                    <b class="oe_price" style="white-space: nowrap;" t-esc="line.product_id.website_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                    <span itemprop="price" style="display:none;" t-esc="line.product_id.website_price"/>
+                                    <span itemprop="priceCurrency" style="display:none;" t-esc="website.currency_id.name"/>
+                                </h5>
+                                <h5 class="css_non_editable_mode_hidden decimal_precision" t-att-data-precision="str(product.currency_id.decimal_places)">
+                                    <span t-field="line.product_id.lst_price"
+                                        t-options='{
+                                        "widget": "monetary",
+                                        "display_currency": product.currency_id,
+                                    }'/>
+                                </h5>
+                                <h4 class="d-none oe_not_available bg-warning">Option not available</h4>
+                            </div>
+                        </td>
+                        <td class="col-2" style="padding-right:0px;position:unset;" >
+                            <span id= "wishlist_to_cart"   class="btn btn-primary pull-left move_to_cart"  t-att-product_id="'%s' % line.product_id.id"  t-att-name_id="wishlist.id" t-att-last="line_last">Move To Cart</span>
+                            <span t-att-name_id = "wishlist.id" class="btn btn-default btn-block pull-left move_to_wishlist" t-att-product_id="'%s' % line.product_id.id" t-att-last="line_last">
+                                <span>Move to wishlist</span>  &#160; 
+                                <i class="fa fa-chevron-down"></i>
+                            </span>   
+                            <span  class="added_date">Added on <t t-esc="line.write_date" t-options='{"format":"d-MM-Y" ,"widget":"date"}'/></span>            
+                        </td>
+                    </tr> 
+                </t>
+                </tbody>
+            </table>
+            <div class="move_to_wishlist_dropdown " >
+            <ul>
+                <t t-foreach="wishlists" t-as="wish">
+                    <li t-att-id="'dropdown_wishlist_%s'%(wish.id)" t-att-name_id="wish.id"  class="move_to_wishlist_selected ">
+                        <span><t t-esc="wish.name if len(wish.name) &lt; 12 else wish.name[:12]+'...'"/></span>
+                    </li>
+                </t>
+            </ul>
+            
+            </div>
+        </template>
+
+
+         <template id="create_wishlist_modal">
+            <div class="modal" id="create_wishlist_modal" role="dialog">
+                <div class="modal-dialog modal-sm">  
+                    <div class="modal-content create_wishlist_modal">
+                        <div class="modal-header">
+                            <h4 class="modal-title col-md-11" style="padding:0px;">Create Wishlist</h4>
+                            <span   class="close modal-cross" data-dismiss="modal" title="close"> &#160;&#160;&#160;</span>
+                        </div>
+                        <div class="modal-body">
+                        <p class='wishlist_modal_msg '>create a new wishlist category here!</p>
+                            <input id="wishlist_input" type="text" class="wishlist_input_normal form-control" placeholder="Give wishlist a name"/>
+                                <label class="custom_checkbox">
+                                    Make it my default wishlist to add products
+                                    <input id="default_wishlist_checkbox_create" type="checkbox" style="margin-right:5px;"/>
+                                    <span class='checkmark'></span> 
+                                </label>
+                        </div>
+                        <div class="modal-footer">
+                            <button  id="create_wishlist_button" type="button" class="btn btn-primary btn-block" >Create</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="edit_wishlist_modal">
+            <div class="modal"  id="edit_wishlist_modal"   role="dialog">
+                <div class="modal-dialog modal-sm">  
+                    <div class="modal-content edit_wishlist_modal">
+                        <div class="modal-header">
+                            <h4 class="modal-title col-md-11 "  style="padding:0px;" >Edit Wishlist</h4>
+                            <span   class="close modal-cross" data-dismiss="modal" title="close"> &#160;&#160;&#160;</span>
+                            
+                        </div>
+                        <div class="modal-body">
+                            <p  class='wishlist_modal_msg'>Edit your wishlist here! and save the changes</p>
+                            <input id="wishlist_edit_input" type="text" class="wishlist_input_normal form-control" placeholder="Give wishlist a name"/>
+                            <label class="custom_checkbox">
+                                Make it my default wishlist to add products
+                                <input id="default_wishlist_checkbox_edit" type="checkbox" />
+                                <span class='checkmark'></span> 
+                            </label>    
+                        </div>
+                        <div class="modal-footer">
+                            <button  id="save_wishlist_button" type="button" class="btn btn-primary btn-block" >Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+         <template id="warning_wishlist_modal">
+            <div class="modal"  id="warning_wishlist_modal"   role="dialog">
+                <div class="modal-dialog modal-sm">  
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <p style="font-size:15px;color:rgba(51,51,51,1);line-height: 25px;" >
+                                Are you sure you want to delete your wishlist "
+                                <span id="modal_wishlist_name" style="font-weight:bold;"></span>"
+                                <br/>
+                                By performing this action you'll lost all your saved products!
+                            </p>
+                            <span   class="close modal-cross" data-dismiss="modal" title="close"> &#160;&#160;&#160;</span>
+                        </div>
+                        <div class="modal-body">
+                            <label class="custom_checkbox">
+                                Yes i'm sure
+                                <input id="confirmation_checkbox" type="checkbox"/>
+                                <span class='checkmark'></span> 
+                            </label>  
+                        </div>
+                        <div class="modal-footer">
+                            <span id="delete_wishlist_button"  class="delete_button float-left">Delete</span>
+                            <a  class="float-right modal_cancle " data-dismiss="modal" style="margin-top: 8px;" >Cancel</a>   
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </data>
+</odoo>

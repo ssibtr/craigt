@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="payment_save_cart" name="payment save cart" inherit_id="website_sale.payment">
+            <xpath expr="//div[@id='payment_method']" position="before">
+                            <button t-if="user_id.partner_id.x_studio_approval_role != 'teacher'" onClick="saveCart()" type="button" class="btn btn-primary">
+	                                Save Cart
+	                            </button>
+	<div id="save-cart-alert" class="alert alert-success" hidden="hidden">
+	  <strong>Cart Saved!</strong> Go back to  <a href="/shop/cart">cart</a>
+	</div>
+	
+	                            
+	                            <script>
+	                              
+	function saveCart(){
+	  fetch('/shop/cart/savecart', {
+	    method: "POST",
+	    headers: {
+	    "Content-Type": "application/json; charset=utf-8",
+	  },
+	  body: JSON.stringify({message: 'test'}),
+	  })                      
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data){ 
+	    console.log(data);
+	    document.getElementById('save-cart-alert').removeAttribute('hidden');
+	  })
+	} 
+	                              
+	                            </script>
+	                            
+            </xpath>
+        </template>
+    </data>
+</odoo>
+
+ 
+ 
+ 
+ 
+ 

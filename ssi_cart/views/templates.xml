@@ -1,0 +1,917 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Copyright 2019 Openworx.
+    @author Mario Gielissen <mario@openworx.nl>
+    License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+    <data>
+        <!-- <template id="account_saved" name="Portal layout : saved menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'saved' or saved" t-attf-class="breadcrumb-item #{'active ' if not saved else ''}">
+                    <a t-if="saved" t-attf-href="/my/saved?{{ keep_query() }}">saveds</a>
+                    <t t-else="">saveds</t>
+                </li>
+                <li t-if="saved" class="breadcrumb-item active">
+                    <t t-esc="saved.name" />
+                </li>
+            </xpath>
+        </template>
+		
+        <template id="portal_my_home_saved" name="Portal My Home : saved entries" inherit_id="portal.portal_my_home" priority="30">
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+                <t t-if="saved_count" t-call="portal.portal_docs_entry">
+                    <t t-set="title">saveds</t>
+                    <t t-set="url" t-value="'/my/saved'" />
+                    <t t-set="count" t-value="saved_count" />
+                </t>
+            </xpath>
+        </template>
+				 -->
+
+        <template id="saved" name="My saveds">
+            <t t-call="portal.portal_layout">
+              <!--<t t-set="breadcrumbs_searchbar" t-value="True"/>-->
+
+              <!--<t t-call="portal.portal_searchbar">-->
+              <!--      <t t-set="title">Quotations</t>-->
+              <!--</t>-->
+              
+                 <nav class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar  mt-3 rounded">       
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1">
+                        <li class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-id="386" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item active ">
+                            Saved Carts
+                        </li>
+                    </ol>
+                </nav> 
+                <script>
+                    console.log(document.getElementsByClassName('align-items-center'))
+                    document.getElementsByClassName('align-items-center')[0].style.display = 'none'
+                </script>
+
+
+                <t t-if="not cart_count">
+                    <div class="alert alert-warning mt8" role="alert">
+                      There are currently no saveds for your account.
+                    </div>
+                </t>
+                <t t-if="cart_count" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Carts #</th>
+                            <th class="text-right">Order Date</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="cart_count" t-as="saved">
+                        <tr>
+                        <td><a t-att-href="'/my/saved/'+str(saved.id)+'?access_token='+str(saved.sudo().access_token)"><t t-esc="saved.name"/></a></td>
+                            <td class="text-right"><span t-field="saved.date_order"/></td>
+                            <td class="text-right">
+                                <span t-field="saved.amount_total"/>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+        <template id="pending" name="My pendings">
+            <t t-call="portal.portal_layout">
+              <!--<t t-set="breadcrumbs_searchbar" t-value="True"/>-->
+
+              <!--<t t-call="portal.portal_searchbar">-->
+              <!--      <t t-set="title">Quotations</t>-->
+              <!--</t>-->
+              
+                 <nav class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar  mt-3 rounded">       
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1">
+                        <li class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-id="386" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item active ">
+                            Pending Approval
+                        </li>
+                    </ol>
+                </nav> 
+                <script>
+                    console.log(document.getElementsByClassName('align-items-center'))
+                    document.getElementsByClassName('align-items-center')[0].style.display = 'none'
+                </script>
+
+
+                <t t-if="not cart_count">
+                    <div class="alert alert-warning mt8" role="alert">
+                      There are currently no pending carts for your account.
+                    </div>
+                </t>
+                <t t-if="cart_count" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Sale Order #</th>
+                            <th>Teacher</th>
+                            <th class="text-right">Order Date</th>
+                            <th>Status</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="cart_count" t-as="pending">
+                        <tr>
+                        <td><a t-att-href="'/my/approval/'+str(pending.id)+'?access_token='+str(pending.sudo().access_token)"><t t-esc="pending.name"/></a></td>
+                            <td><t t-esc="pending.partner_id.name"/></td>
+                            <td class="text-right"><span t-field="pending.date_order"/></td>
+
+                            <td t-if="pending.client_order_ref == False"><span>Approval Pending</span></td>
+                            <td t-else=""><span>Approved - Submitted</span></td>
+
+                            <td class="text-right">
+                                <span t-field="pending.amount_total"/>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- NEXT You should make sure that the quotation view knows what status the quote is as well as the roll of the user if it is a teacher with a status of sent for instance then the breadcrumb should say PENDING and not whatever it says now  -->
+
+        <template id="tapproved" name="My pendings">
+            <t t-call="portal.portal_layout">
+              <!--<t t-set="breadcrumbs_searchbar" t-value="True"/>-->
+
+              <!--<t t-call="portal.portal_searchbar">-->
+              <!--      <t t-set="title">Quotations</t>-->
+              <!--</t>-->
+              
+                 <nav class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar  mt-3 rounded">       
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1">
+                        <li class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-id="386" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item active ">
+                            Approved Orders
+                        </li>
+                    </ol>
+                </nav> 
+                <script>
+                    console.log(document.getElementsByClassName('align-items-center'))
+                    document.getElementsByClassName('align-items-center')[0].style.display = 'none'
+                </script>
+
+
+                <t t-if="not cart_count">
+                    <div class="alert alert-warning mt8" role="alert">
+                      There are currently no approved carts for your account.
+                    </div>
+                </t>
+                <t t-if="cart_count" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Sale Order #</th>
+                            <th>PO #</th>
+                            <th>Teacher</th>
+                            <th class="text-right">Order Date</th>
+                            <th class="">Status</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="cart_count" t-as="tapproved">
+                        <tr>
+                        <td><a t-att-href="'/my/approval/'+str(tapproved.id)+'?access_token='+str(tapproved.sudo().access_token)"><t t-esc="tapproved.name"/></a></td>
+                            <td ><t t-if="tapproved.client_order_ref" t-esc="tapproved.client_order_ref"/></td>
+
+                            <td><t t-esc="tapproved.partner_id.name"/></td>
+
+                            <td class="text-right"><span t-field="tapproved.date_order"/></td>
+                            <td>
+                              <span t-if="tapproved.state == 'done'">Approved - Shipped</span>
+                              <span t-if="tapproved.state == 'sale' and tapproved.x_procurement_status == 'done'">Approved - Shipped</span>
+                              <span t-if="tapproved.state == 'sale'and tapproved.x_procurement_status != 'done'">Approved - In Process</span>
+                              <span t-if="tapproved.state == 'cancel'">Canceled</span>
+                          
+                            </td>
+                            <td class="text-right">
+                                <span t-field="tapproved.amount_total"/>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+
+        <template id="approved" name="My approveds">
+            <t t-call="portal.portal_layout">
+              <!--<t t-set="breadcrumbs_searchbar" t-value="True"/>-->
+
+              <!--<t t-call="portal.portal_searchbar">-->
+              <!--      <t t-set="title">Quotations</t>-->
+              <!--</t>-->
+              
+                 <nav class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar  mt-3 rounded">       
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1">
+                        <li class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-id="386" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item active ">
+                            Orders
+                        </li>
+                    </ol>
+                </nav> 
+                <script>
+                    console.log(document.getElementsByClassName('align-items-center'))
+                    document.getElementsByClassName('align-items-center')[0].style.display = 'none'
+                </script>
+
+
+                <t t-if="not cart_count">
+                    <div class="alert alert-warning mt8" role="alert">
+                      There are currently no carts for your account.
+                    </div>
+                </t>
+                <t t-if="cart_count" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Orders #</th>
+                            <th class="text-right">Order Date</th>
+                            <th>Status</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="cart_count" t-as="approved">
+                        <tr>
+                        <td><a t-att-href="'/my/approval/'+str(approved.id)+'?access_token='+str(approved.sudo().access_token)"><t t-esc="approved.name"/></a></td>
+                            <td class="text-right"><span t-field="approved.date_order"/></td>
+                            <td>
+
+                              <span t-if="approved.state == 'sent' and approved.client_order_ref == False">Approval Pending</span>
+                              <span t-if="approved.state == 'sent' and approved.client_order_ref != False">Approved - Submitted</span>
+                              <!-- <span t-if="approved.state == 'pending'">Approval Pending</span> -->
+                              <span t-if="approved.state == 'done'">Approved - Shipped</span>
+                              <span t-if="approved.state == 'sale' and approved.x_procurement_status == 'done'">Approved - Shipped</span>
+                              <span t-if="approved.state == 'sale' and approved.x_procurement_status != 'done'">Approved - In Process</span>
+                              <span t-if="approved.state == 'cancel'">Canceled</span>
+
+
+
+                            </td>
+                            <td class="text-right">
+                                <span t-field="approved.amount_total"/>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+        <!-- Complete page of the saved -->
+        <template id="saved_page" name="saveds Detail Page" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (sale_order._name, sale_order.id, sale_order.env.ref('sale.action_quotations').id)"/>
+                </t>
+            </t>
+            
+                <nav class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar  mt-3 rounded">       
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1">
+                        <li class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-id="386" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"></i></a></li>
+                        <li class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/saved" aria-label="Home" title="Home">Saved Carts</a></li>
+                        <li class="breadcrumb-item active ">
+                            <t t-esc="sale_order.name"></t>
+                        </li>
+
+                    </ol>
+                </nav> 
+                <script>
+                    console.log(document.getElementsByClassName('align-items-center'))
+                    document.getElementsByClassName('align-items-center')[0].style.display = 'none'
+                </script>
+            
+            <div class="row mt16 o_portal_sale_sidebar">
+                <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-12 col-lg flex-lg-grow-0 d-print-none'"/>
+
+                    <t t-set="title">
+                        <h2 class="mb-0"><b t-field="sale_order.amount_total"/> </h2>
+                    </t>
+                    <t t-set="entries">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <li class="list-group-item flex-grow-1">
+                                <a t-if="sale_order.has_to_be_signed(True)" role="button" class="btn btn-primary btn-block mb8" data-toggle="modal" data-target="#modalaccept" href="#">
+                                    <i class="fa fa-check"/> Accept &amp; Sign
+                                </a>
+                                <a t-elif="sale_order.has_to_be_paid(True)" role="button" class="btn btn-primary btn-block mb8" data-toggle="modal" data-target="#modalaccept" href="#">
+                                    <i class="fa fa-check"/> <t t-if="not sale_order.signature">Accept &amp; Pay</t><t t-else="">Pay now</t>
+                                </a>
+                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                    <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_download_btn" t-att-href="sale_order.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Download</a>
+                                    </div>
+                                    <div class="btn-group flex-grow-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print" t-att-href="sale_order.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Print</a>
+                                    </div>
+                                </div>
+                                <div>
+                                <!-- <div> -->
+                                  <input id="restore_cart_hidden_input" type="text"  t-att-value="sale_order.id" hidden="hidden"/>
+                                  <input id="restore_cart_hidden_input_token" type="text"  t-att-value="sale_order.access_token" hidden="hidden"/>
+                                  <button onClick="restoreCart('merge')" class="btn btn-secondary btn-block">
+                                    Merge Cart
+                                  </button>
+                                  <button onClick="restoreCart('squash')" class="btn btn-secondary btn-block">
+                                      Replace Cart
+                                  </button>
+                                </div>
+
+                                <script>
+                                    function restoreCart(revive) {
+                                      const so_id = document.getElementById('restore_cart_hidden_input').value;
+                                      const token = document.getElementById('restore_cart_hidden_input_token')
+                                        .value;
+
+                                      fetch('/shop/cart/restorecart', {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json; charset=utf-8'
+                                        },
+                                        body: JSON.stringify({ so_id, revive })
+                                      })
+                                        .then(function(response) {
+                                          return response.json();
+                                        })
+                                        .then(function(data) {
+                                          console.log(JSON.stringify(data));
+                                          window.location.href = `/shop/cart/?access_token=${token}&amp;revive=${revive}`
+                                          ;
+                                        });
+                                    }
+                                  
+                                </script>
+
+                            </li>
+
+                            <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true" role="complementary">
+                                <ul class="nav flex-column bs-sidenav"></ul>
+                            </li>
+
+                            <t t-if="not sale_order.is_expired and sale_order.state in ['draft', 'sent']">
+                                <li t-if="sale_order.remaining_validity_days &gt; 0" class="list-group-item">
+                                    <small><b class="text-muted">This offer expires in</b></small>
+                                    <div class="day_counter">
+                                        <i class="fa fa-clock-o" aria-title="Dates" title="Dates"></i>
+                                        <t t-esc="sale_order.remaining_validity_days"/>
+                                        <t t-if="sale_order.remaining_validity_days &gt; 1">days</t><t t-else="">day</t>
+                                    </div>
+                                </li>
+                                <li t-if="sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01" class="list-group-item flex-grow-1">
+                                    <small><b class="text-muted">Your advantage</b></small>
+                                    <small>
+                                        <b t-field="sale_order.amount_undiscounted"
+                                            t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
+                                            style="text-decoration: line-through"
+                                            class="d-block mt-1"/>
+                                    </small>
+                                    <t t-if="sale_order.amount_untaxed == sale_order.amount_total">
+                                        <h4 t-field="sale_order.amount_total" class="text-success"/>
+                                    </t>
+                                    <t t-else="">
+                                        <h4 t-field="sale_order.amount_untaxed" class="text-success mb-0"/>
+                                        <small>(<span t-field="sale_order.amount_total"/> Incl. tax)</small>
+                                    </t>
+                                </li>
+                            </t>
+
+                            <li t-if="sale_order.user_id" class="list-group-item flex-grow-1">
+                                <div class="small mb-1"><strong class="text-muted">Your Contact</strong></div>
+                                <div class="row flex-nowrap">
+                                    <div class="col flex-grow-0 pr-2">
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="sale_order.user_id.image" t-att-src="image_data_uri(sale_order.user_id.image)" alt="Contact"/>
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="not sale_order.user_id.image" src="/web/static/src/img/placeholder.png" alt="Contact"/>
+                                    </div>
+                                    <div class="col pl-0" style="min-width: 150px">
+                                        <span t-field="sale_order.user_id" t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                        <a href="#discussion" class="small"><i class="fa fa-comment"></i> Send message</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+
+                <!-- Page content -->
+                <div id="quote_content" class="col-12 col-lg justify-content-end">
+
+                    <!-- modal relative to the actions sign and pay -->
+                    <div role="dialog" class="modal fade" id="modalaccept">
+                        <div class="modal-dialog" t-if="sale_order.has_to_be_signed(True)">
+                            <form id="accept" method="POST" t-att-data-order-id="sale_order.id" t-att-data-token="sale_order.access_token" class="js_accept_json modal-content js_website_submit_form">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Validate Order</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&amp;times;</button>
+                                </header>
+                                <main class="modal-body" id="sign-dialog">
+                                    <!-- <p>
+                                        <span>By signing this proposal, I agree to the following terms:</span>
+                                        <ul>
+                                            <li><span>Accepted on the behalf of:</span> <b t-field="sale_order.partner_id.commercial_partner_id"/></li>
+                                            <li><span>For an amount of:</span> <b data-id="total_amount" t-field="sale_order.amount_total"/></li>
+                                            <li t-if="sale_order.payment_term_id"><span>With payment terms:</span> <b t-field="sale_order.payment_term_id"/></li>
+                                        </ul>
+                                    </p> -->
+                                    <t t-call="portal.portal_signature">
+                                        <t t-set="object" t-value="sale_order"/>
+                                        <t t-set="partner_name" t-value="sale_order.partner_id.name"/>
+                                        <t t-set="callUrl" t-value="sale_order.get_portal_url(suffix='/accept')"/>
+                                        <t t-set="accessToken" t-value="sale_order.access_token"/>
+                                    </t>
+                                </main>
+                            </form>
+                        </div>
+
+                        <div class="modal-dialog modal-content" t-if="not sale_order.has_to_be_signed(True) and sale_order.has_to_be_paid(True)">
+                            <header class="modal-header">
+                                <h4 class="modal-title">Validate Order</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&amp;times;</button>
+                            </header>
+                            <main class="modal-body" id="sign-dialog">
+                                <!-- <p>
+                                    <span>By paying this proposal, I agree to the following terms:</span>
+                                    <ul>
+                                        <li><span>Accepted on the behalf of:</span> <b t-field="sale_order.partner_id.commercial_partner_id"/></li>
+                                        <li><span>For an amount of:</span> <b data-id="total_amount" t-field="sale_order.amount_total"/></li>
+                                        <li t-if="sale_order.payment_term_id"><span>With payment terms:</span> <b t-field="sale_order.payment_term_id"/></li>
+                                    </ul>
+                                </p> -->
+                                <div t-if="pms or acquirers" id="payment_method" class="text-left">
+                                    <h3 class="mb24">Pay with</h3>
+                                    <t t-call="payment.payment_tokens_list">
+                                        <t t-set="mode" t-value="'payment'"/>
+                                        <t t-set="submit_txt">Place Order</t>
+                                        <t t-set="icon_class" t-value="'fa-lock'"/>
+                                        <t t-set="form_action" t-value="sale_order.get_portal_url(suffix='/transaction/token')"/>
+                                        <t t-set="prepare_tx_url" t-value="sale_order.get_portal_url(suffix='/transaction/')"/>
+                                        <t t-set="access_token" t-value="sale_order.access_token"/>
+                                    </t>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+
+                    <!-- modal relative to the action reject -->
+                    <div role="dialog" class="modal fade" id="modaldecline">
+                        <div class="modal-dialog">
+                            <form id="decline" method="POST" t-attf-action="/my/orders/#{sale_order.id}/decline?access_token=#{sale_order.access_token}" class="modal-content">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Reject This Quotation</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&amp;times;</button>
+                                </header>
+                                <main class="modal-body">
+                                    <p>
+                                        Tell us why you are refusing this quotation, this will help us improve our services.
+                                    </p>
+                                    <textarea rows="4" name="decline_message" required="" placeholder="Your feedback..." class="form-control" />
+                                </main>
+                                <footer class="modal-footer">
+                                    <button type="submit" t-att-id="sale_order.id" class="btn btn-danger"><i class="fa fa-times"></i> Reject</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                </footer>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- status messages -->
+                    <div t-if="message == 'sign_ok'" class="alert alert-success alert-dismissable d-print-none" role="status">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&amp;times;</button>
+                        <strong>Thank You!</strong><br/>
+                        <t t-if="message == 'sign_ok' and sale_order.state in ['sale', 'done']">Your order has been confirmed.</t>
+                        <t t-elif="message == 'sign_ok' and sale_order.has_to_be_paid()">Your order has been signed but still needs to be paid to be confirmed.</t>
+                        <t t-else="">Your order has been signed.</t>
+                    </div>
+
+                    <div t-if="message == 'cant_reject' and sale_order.has_to_be_signed()" class="alert alert-danger alert-dismissable d-print-none" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&amp;times;</button>
+                        Your order is not in a state to be rejected.
+                    </div>
+
+                    <!-- <t t-if="sale_order.transaction_ids">
+                        <t t-call="payment.payment_confirmation_status">
+                            <t t-set="payment_tx_id" t-value="sale_order.get_portal_last_transaction()"/>
+                            <t t-set="reference" t-value="sale_order.reference"/>
+                        </t>
+                    </t> -->
+
+                    <div t-if="sale_order.state == 'cancel'" class="alert alert-danger alert-dismissable d-print-none" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="close">&amp;times;</button>
+                        <strong>This quotation has been canceled.</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get a new quotation.</a>
+                    </div>
+
+                    <div t-if="sale_order.state == 'draft'" class="alert alert-warning alert-dismissable d-print-none" role="status">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="close">&amp;times;</button>
+                        <strong>This is a draft quotation.</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get the final version.</a>
+                    </div>
+
+                    <div t-if="sale_order.is_expired" class="alert alert-warning alert-dismissable d-print-none" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="close">&amp;times;</button>
+                        <strong>This offer expired!</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get a new quotation.</a>
+                    </div>
+
+                    <!-- main content -->
+                    <div t-attf-class="card #{'pb-5' if report_type == 'html' else ''}">
+                        <div t-call="sale.sale_order_portal_content"/>
+                    </div>
+
+                    <!-- bottom actions -->
+                    <div t-if="sale_order.has_to_be_signed(True) or sale_order.has_to_be_paid(True)" class="row justify-content-center text-center d-print-none pt-1 pb-4">
+
+                        <t t-if="sale_order.has_to_be_signed(True)">
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-primary" data-toggle="modal" data-target="#modalaccept" href="#"><i class="fa fa-check"/> Accept &amp; Sign</a>
+                            </div>
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-secondary" href="#discussion"><i class="fa fa-comment"/> Feedback</a>
+                            </div>
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-danger" data-toggle="modal" data-target="#modaldecline" href="#"> <i class="fa fa-times"/> Reject</a>
+                            </div>
+                        </t>
+                        <div t-elif="sale_order.has_to_be_paid(True)" class="col-sm-auto mt8">
+                            <a role="button" class="btn btn-primary" data-toggle="modal" data-target="#modalaccept" href="#">
+                                <i class="fa fa-check"/> <t t-if="not sale_order.signature">Accept &amp; Pay</t><t t-else="">Pay now</t>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- chatter -->
+                    <div id="sale_order_communication" class="mt-4">
+                        <h2>Communication</h2>
+                        <t t-call="portal.message_thread">
+                            <t t-set="object" t-value="sale_order"/>
+                        </t>
+                    </div>
+                </div><!-- // #quote_content -->
+            </div>
+        </xpath>
+
+        </template>
+
+        <template id="approved_page" name="approveds Detail Page" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (sale_order._name, sale_order.id, sale_order.env.ref('sale.action_quotations').id)"/>
+                </t>
+            </t>
+            
+                <nav class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar  mt-3 rounded">       
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1">
+                        <li class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-id="386" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/home" aria-label="Home" title="Home"><i class="fa fa-home"></i></a></li>
+                        
+                        
+                        
+                        
+                        <li t-if="isTeacher == True and sale_order.state == 'sent' " class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/pending" aria-label="Home" title="Home">Pending Approval</a></li>
+
+                        <li t-elif="isTeacher == True and sale_order.state in ['done', 'cancel', 'sale']" class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/approved" aria-label="Home" title="Home">Approved Orders</a></li>
+
+                        <li t-else="" class="breadcrumb-item" data-oe-model="ir.ui.view" data-oe-field="arch" data-oe-xpath="/t[1]/ol[1]/li[1]"><a href="/my/approval" aria-label="Home" title="Home">Orders</a></li>
+
+
+                        <li class="breadcrumb-item active ">
+                            <t t-esc="sale_order.name"></t>
+                        </li>
+
+                    </ol>
+                </nav> 
+                <script>
+                    console.log(document.getElementsByClassName('align-items-center'))
+                    document.getElementsByClassName('align-items-center')[0].style.display = 'none'
+                </script>
+            
+            <div class="row mt16 o_portal_sale_sidebar">
+                <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-12 col-lg flex-lg-grow-0 d-print-none'"/>
+
+                    <t t-set="title">
+                        <h2 class="mb-0"><b t-field="sale_order.amount_total"/> </h2>
+                    </t>
+                    <t t-set="entries">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <li class="list-group-item flex-grow-1">
+                                <a t-if="sale_order.has_to_be_signed(True)" role="button" class="btn btn-primary btn-block mb8" data-toggle="modal" data-target="#modalaccept" href="#">
+                                    <i class="fa fa-check"/> Accept &amp; Sign
+                                </a>
+                              <a t-elif="sale_order.has_to_be_paid(True) and isTeacher == True and sale_order.client_order_ref == False" role="button" class="btn btn-primary btn-block mb8" data-toggle="modal" data-target="#modalaccept" href="#">
+    <i class="fa fa-check"/> <t t-if="not sale_order.signature">Place Order</t><t t-else="">Pay now</t>
+</a>
+
+                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                    <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_download_btn" t-att-href="sale_order.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Download</a>
+                                    </div>
+                                    <div class="btn-group flex-grow-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print" t-att-href="sale_order.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Print</a>
+                                    </div>
+                                </div>
+                                <div>
+                                <!-- <div> -->
+                                  <input id="restore_cart_hidden_input" type="text"  t-att-value="sale_order.id" hidden="hidden"/>
+                                  <input id="restore_cart_hidden_input_token" type="text"  t-att-value="sale_order.access_token" hidden="hidden"/>
+                                  <!-- <button onClick="restoreCart('merge')" class="btn btn-secondary btn-block">
+                                    Merge Cart
+                                  </button>
+                                  <button onClick="restoreCart('squash')" class="btn btn-secondary btn-block">
+                                      Replace Cart
+                                  </button> -->
+                                </div>
+
+                                <!-- <script>
+                                    function restoreCart(revive) {
+                                      const so_id = document.getElementById('restore_cart_hidden_input').value;
+                                      const token = document.getElementById('restore_cart_hidden_input_token')
+                                        .value;
+
+                                      fetch('/shop/cart/restorecart', {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json; charset=utf-8'
+                                        },
+                                        body: JSON.stringify({ so_id, revive })
+                                      })
+                                        .then(function(response) {
+                                          return response.json();
+                                        })
+                                        .then(function(data) {
+                                          console.log(JSON.stringify(data));
+                                          window.location.href = `/shop/cart/?access_token=${token}&amp;revive=${revive}`
+                                          ;
+                                        });
+                                    }
+                                  
+                                </script> -->
+
+                            </li>
+
+                            <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true" role="complementary">
+                                <ul class="nav flex-column bs-sidenav"></ul>
+                            </li>
+
+                            <t t-if="not sale_order.is_expired and sale_order.state in ['draft', 'sent']">
+                                <li t-if="sale_order.remaining_validity_days &gt; 0" class="list-group-item">
+                                    <small><b class="text-muted">This offer expires in</b></small>
+                                    <div class="day_counter">
+                                        <i class="fa fa-clock-o" aria-title="Dates" title="Dates"></i>
+                                        <t t-esc="sale_order.remaining_validity_days"/>
+                                        <t t-if="sale_order.remaining_validity_days &gt; 1">days</t><t t-else="">day</t>
+                                    </div>
+                                </li>
+                                <li t-if="sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01" class="list-group-item flex-grow-1">
+                                    <small><b class="text-muted">Your advantage</b></small>
+                                    <small>
+                                        <b t-field="sale_order.amount_undiscounted"
+                                            t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
+                                            style="text-decoration: line-through"
+                                            class="d-block mt-1"/>
+                                    </small>
+                                    <t t-if="sale_order.amount_untaxed == sale_order.amount_total">
+                                        <h4 t-field="sale_order.amount_total" class="text-success"/>
+                                    </t>
+                                    <t t-else="">
+                                        <h4 t-field="sale_order.amount_untaxed" class="text-success mb-0"/>
+                                        <small>(<span t-field="sale_order.amount_total"/> Incl. tax)</small>
+                                    </t>
+                                </li>
+                            </t>
+
+                            <li t-if="sale_order.user_id" class="list-group-item flex-grow-1">
+                                <div class="small mb-1"><strong class="text-muted">Your Contact</strong></div>
+                                <div class="row flex-nowrap">
+                                    <div class="col flex-grow-0 pr-2">
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="sale_order.user_id.image" t-att-src="image_data_uri(sale_order.user_id.image)" alt="Contact"/>
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="not sale_order.user_id.image" src="/web/static/src/img/placeholder.png" alt="Contact"/>
+                                    </div>
+                                    <div class="col pl-0" style="min-width: 150px">
+                                        <span t-field="sale_order.user_id" t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                        <a href="#discussion" class="small"><i class="fa fa-comment"></i> Send message</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+
+                <!-- Page content -->
+                <div id="quote_content" class="col-12 col-lg justify-content-end">
+
+                    <!-- modal relative to the actions sign and pay -->
+                    <div role="dialog" class="modal fade" id="modalaccept">
+                        <div class="modal-dialog" t-if="sale_order.has_to_be_signed(True)">
+                            <form id="accept" method="POST" t-att-data-order-id="sale_order.id" t-att-data-token="sale_order.access_token" class="js_accept_json modal-content js_website_submit_form">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Validate Order</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&amp;times;</button>
+                                </header>
+                                <main class="modal-body" id="sign-dialog">
+                                    <!-- <p>
+                                        <span>By signing this proposal, I agree to the following terms:</span>
+                                        <ul>
+                                            <li><span>Accepted on the behalf of:</span> <b t-field="sale_order.partner_id.commercial_partner_id"/></li>
+                                            <li><span>For an amount of:</span> <b data-id="total_amount" t-field="sale_order.amount_total"/></li>
+                                            <li t-if="sale_order.payment_term_id"><span>With payment terms:</span> <b t-field="sale_order.payment_term_id"/></li>
+                                        </ul>
+                                    </p> -->
+                                    <t t-call="portal.portal_signature">
+                                        <t t-set="object" t-value="sale_order"/>
+                                        <t t-set="partner_name" t-value="sale_order.partner_id.name"/>
+                                        <t t-set="callUrl" t-value="sale_order.get_portal_url(suffix='/accept')"/>
+                                        <t t-set="accessToken" t-value="sale_order.access_token"/>
+                                    </t>
+                                </main>
+                            </form>
+                        </div>
+
+                        <div class="modal-dialog modal-content" t-if="not sale_order.has_to_be_signed(True) and sale_order.has_to_be_paid(True)">
+                            <header class="modal-header">
+                                <h4 class="modal-title">Validate Order</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&amp;times;</button>
+                            </header>
+                            <main class="modal-body" id="sign-dialog">
+                                <!-- <p>
+                                    <span>By paying this proposal, I agree to the following terms:</span>
+                                    <ul>
+                                        <li><span>Accepted on the behalf of:</span> <b t-field="sale_order.partner_id.commercial_partner_id"/></li>
+                                        <li><span>For an amount of:</span> <b data-id="total_amount" t-field="sale_order.amount_total"/></li>
+                                        <li t-if="sale_order.payment_term_id"><span>With payment terms:</span> <b t-field="sale_order.payment_term_id"/></li>
+                                    </ul>
+                                </p> -->
+                                
+                                
+                                
+<div t-if="user_id.partner_id.x_studio_approval_role != 'teacher'" class="row">
+  <div class="col-md-12">
+    <h3>PO Number</h3>
+    <input class="form-control" name="registerPO" placeholder="PO#"/>
+    <input class="form-control soNum"  t-att-value="sale_order.id" hidden="hidden"/>
+    <p id="po-message-error" class="text-danger" hidden="hidden">You must enter a purchase order number.</p>
+  </div>
+</div>
+
+
+                                <div t-if="pms or acquirers" id="payment_method" class="text-left">
+                                    <h3 class="mb24">Pay with</h3>
+                                    <t t-call="payment.payment_tokens_list">
+                                        <t t-set="mode" t-value="'payment'"/>
+                                        <t t-set="submit_txt">Place Order</t>
+                                        <t t-set="icon_class" t-value="'fa-lock'"/>
+                                        <t t-set="form_action" t-value="sale_order.get_portal_url(suffix='/transaction/token')"/>
+                                        <t t-set="prepare_tx_url" t-value="sale_order.get_portal_url(suffix='/transaction/')"/>
+                                        <t t-set="access_token" t-value="sale_order.access_token"/>
+                                    </t>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+
+                    <!-- modal relative to the action reject -->
+                    <div role="dialog" class="modal fade" id="modaldecline">
+                        <div class="modal-dialog">
+                            <form id="decline" method="POST" t-attf-action="/my/orders/#{sale_order.id}/decline?access_token=#{sale_order.access_token}" class="modal-content">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Reject This Quotation</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&amp;times;</button>
+                                </header>
+                                <main class="modal-body">
+                                    <p>
+                                        Tell us why you are refusing this quotation, this will help us improve our services.
+                                    </p>
+                                    <textarea rows="4" name="decline_message" required="" placeholder="Your feedback..." class="form-control" />
+                                </main>
+                                <footer class="modal-footer">
+                                    <button type="submit" t-att-id="sale_order.id" class="btn btn-danger"><i class="fa fa-times"></i> Reject</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                </footer>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- status messages -->
+                    <div t-if="message == 'sign_ok'" class="alert alert-success alert-dismissable d-print-none" role="status">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&amp;times;</button>
+                        <strong>Thank You!</strong><br/>
+                        <t t-if="message == 'sign_ok' and sale_order.state in ['sale', 'done']">Your order has been confirmed.</t>
+                        <t t-elif="message == 'sign_ok' and sale_order.has_to_be_paid()">Your order has been signed but still needs to be paid to be confirmed.</t>
+                        <t t-else="">Your order has been signed.</t>
+                    </div>
+
+                    <div t-if="message == 'cant_reject' and sale_order.has_to_be_signed()" class="alert alert-danger alert-dismissable d-print-none" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&amp;times;</button>
+                        Your order is not in a state to be rejected.
+                    </div>
+
+                    <!-- <t t-if="sale_order.transaction_ids">
+                        <t t-call="payment.payment_confirmation_status">
+                            <t t-set="payment_tx_id" t-value="sale_order.get_portal_last_transaction()"/>
+                            <t t-set="reference" t-value="sale_order.reference"/>
+                        </t>
+                    </t> -->
+
+                    <div t-if="sale_order.state == 'cancel'" class="alert alert-danger alert-dismissable d-print-none" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="close">&amp;times;</button>
+                        <strong>This quotation has been canceled.</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get a new quotation.</a>
+                    </div>
+
+                    <div t-if="sale_order.state == 'draft'" class="alert alert-warning alert-dismissable d-print-none" role="status">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="close">&amp;times;</button>
+                        <strong>This is a draft quotation.</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get the final version.</a>
+                    </div>
+
+                    <div t-if="sale_order.is_expired" class="alert alert-warning alert-dismissable d-print-none" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="close">&amp;times;</button>
+                        <strong>This offer expired!</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get a new quotation.</a>
+                    </div>
+
+                    <!-- main content -->
+                    <div t-attf-class="card #{'pb-5' if report_type == 'html' else ''}">
+                        <div t-call="sale.sale_order_portal_content"/>
+                    </div>
+
+                    <!-- bottom actions -->
+                    <div t-if="isTeacher == True">
+                                          <div t-if="sale_order.has_to_be_signed(True) or sale_order.has_to_be_paid(True)" class="row justify-content-center text-center d-print-none pt-1 pb-4">
+
+                        <t t-if="sale_order.has_to_be_signed(True)">
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-primary" data-toggle="modal" data-target="#modalaccept" href="#"><i class="fa fa-check"/> Accept &amp; Sign</a>
+                            </div>
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-secondary" href="#discussion"><i class="fa fa-comment"/> Feedback</a>
+                            </div>
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-danger" data-toggle="modal" data-target="#modaldecline" href="#"> <i class="fa fa-times"/> Reject</a>
+                            </div>
+                        </t>
+<div t-elif="sale_order.has_to_be_paid(True) and sale_order.client_order_ref == False" class="col-sm-auto mt8">
+    <a role="button" class="btn btn-primary" data-toggle="modal" data-target="#modalaccept" href="#">
+        <i class="fa fa-check"/> <t t-if="not sale_order.signature">Place Order</t><t t-else="">Pay now</t>
+    </a>
+</div>                    </div>
+
+                    </div>
+
+                    <!-- chatter -->
+                    <div id="sale_order_communication" class="mt-4">
+                        <h2>Communication</h2>
+                        <t t-call="portal.message_thread">
+                            <t t-set="object" t-value="sale_order"/>
+                        </t>
+                    </div>
+                </div><!-- // #quote_content -->
+            </div>
+        </xpath>
+
+        </template>
+
+        <!-- <template id="saved_recurring_items" name="Recurring Items">
+            <section id="recurring_items">
+                <t t-if="saved.recurring_invoice_line_ids">
+                    <div class="card-body">
+                        <h5>saved details</h5>
+                        <table class="table table-sm table-responsive-lg">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th class="text-right">Quantity</th>
+                                    <th class="text-right">Unit Price</th>
+                                    <th class="text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="saved.recurring_invoice_line_ids" t-as="invoice_line">
+                                    <tr>
+                                        <td class="line-description">
+                                            <span t-field="invoice_line.display_name" />
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="invoice_line.quantity" />
+                                            <span t-field="invoice_line.uom_id" />
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="invoice_line.price_unit" />
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="invoice_line.price_subtotal" />
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </section>
+        </template> -->
+    </data>
+</odoo>

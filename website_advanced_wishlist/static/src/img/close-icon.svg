@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>close-icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Wishlist-4" transform="translate(-855.000000, -193.000000)" fill="#777777">
+            <g id="PopUp" transform="translate(392.000000, 168.000000)">
+                <path d="M473.067574,33.7824856 L480.640797,41.3557089 L479.681981,42.3145254 L472.108757,34.7413021 L464.535534,42.3145254 L463.576717,41.3557089 L471.149941,33.7824856 L463.576717,26.2092623 L464.535534,25.2504457 L472.108757,32.823669 L479.681981,25.2504457 L480.640797,26.2092623 L473.067574,33.7824856 Z" id="close-icon"></path>
+            </g>
+        </g>
+    </g>
+</svg>

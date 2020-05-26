@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2018-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+
+
+<odoo>
+    <data noupdate="1">
+        <record id="demo_wishlist_1" model="wishlist.name">
+            <field name="name">My wishlist</field>
+            <field name="user_id" ref="base.user_root"></field>
+            <field name="is_default">True</field>
+        </record>
+        <record id="demo_wishlist_2" model="wishlist.name">
+            <field name="name">My collection</field>
+            <field name="user_id" ref="base.user_root"></field>
+            <field name="is_default">False</field>
+        </record>
+    </data>
+</odoo>

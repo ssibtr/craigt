@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2018-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="wk_wishlist_name_tree">
+            <field name="name">User Wishlists</field>
+            <field name="model">wishlist.name</field>
+            <field name="arch" type="xml">
+                <tree string="Wishlsit">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="wishlist_line_ids"/>
+                    <field name="is_default"/>
+                </tree>
+            </field>
+        </record>
+        <record id="Wk_wishlist_name_form" model="ir.ui.view">
+        <field name="name">Wishlist form</field>
+        <field name="model">wishlist.name</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <group col = "2">
+                <group >
+                    <field name = "name"/>
+                    <field name = "partner_id"/>
+                    <field name = "user_id"/> 
+                    <field name="is_default"/> 
+                    </group>
+            </group>
+            <notebook>
+                    <page string='wishlist items'>
+                            <tree string='items' create="1" >
+                                <field name = "wishlist_line_ids" />
+                            </tree>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+       
+        
+        
+
+        <record id="wk_user_wishlists_name" model="ir.actions.act_window">
+            <field name="name">User Wishlists </field>
+            <field name="res_model">wishlist.name</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="wk_wishlist_name_tree"/>
+        </record>
+
+        <menuitem name="Wishlists" id="website_wishlist.portal_wk_wishlist_menu" parent="website_wishlist.portal_wk_wishlist" action="wk_user_wishlists_name" sequence="1"/>  
+    </data>
+</odoo>

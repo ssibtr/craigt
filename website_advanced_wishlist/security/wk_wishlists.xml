@@ -1,0 +1,9 @@
+<odoo>
+   <record id="wishlists_record_rule" model="ir.rule">
+        <field name="name">Contact Person Records For Reporter </field>
+        <field name="model_id" ref="model_wishlist_name"/>
+        <!-- <field name="groups" eval="[(4,ref('demo_security_user_group'))]"/> -->
+        <field name="domain_force">[('user_id','=',user.id)]</field>
+    </record>
+
+</odoo>

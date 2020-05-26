@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="restore_cart_buttons" name="restore cart buttons" inherit_id="sale.sale_order_portal_template">
+            <xpath expr="//div[@class='o_download_pdf btn-toolbar flex-sm-nowrap']" position="after">
+              <!-- <div t-if="sale_order.state == 'saved'"> -->
+              <div>
+                <input id="restore_cart_hidden_input" type="text"  t-att-value="sale_order.id" hidden="hidden"/>
+                <input id="restore_cart_hidden_input_token" type="text"  t-att-value="sale_order.access_token" hidden="hidden"/>
+                <button onClick="restoreCart('merge')" class="btn btn-secondary btn-block">
+                  Restore Cart (Merge)
+                </button>
+                <button onClick="restoreCart('squash')" class="btn btn-secondary btn-block">
+                    Restore Cart (Squash)
+                </button>
+              </div>
+
+              <script>
+                  function restoreCart(revive) {
+                    const so_id = document.getElementById('restore_cart_hidden_input').value;
+                    const token = document.getElementById('restore_cart_hidden_input_token')
+                      .value;
+
+                    fetch('/shop/cart/restorecart', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                      },
+                      body: JSON.stringify({ so_id, revive })
+                    })
+                      .then(function(response) {
+                        return response.json();
+                      })
+                      .then(function(data) {
+                        console.log(JSON.stringify(data));
+                        window.location.href = `/shop/cart/?access_token=${token}&amp;revive=${revive}`
+                        ;
+                      });
+                  }
+                
+              </script>
+            </xpath>
+        </template>
+    </data>
+</odoo>
+
+ 
+ 
+ 
+ 
+ 

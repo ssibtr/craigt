@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="view_order_form_cart_saved" name="View order form cart saved" inherit_id="sale.view_order_form">
+            <xpath expr="//field[@name='state']" position="replace">
+                <field name="state" widget="statusbar" statusbar_visible="draft,sent,saved,sale"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>
+
+  
+ 
+ 

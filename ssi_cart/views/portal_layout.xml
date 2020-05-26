@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_layout_save_cart" name="Portal layout save cart" inherit_id="sale.portal_my_home_menu_sale">
+            <xpath expr="//li[1]" position="before">
+              <li t-if="page_name == 'cart' or sale_order and sale_order.state in ('saved')" t-attf-class="breadcrumb-item #{'active ' if not sale_order else ''}">
+                  <a t-if="sale_order" t-attf-href="/my/carts?{{ keep_query() }}">Saved Carts</a>
+                  <t t-else="">Saved Carts</t>
+              </li>
+            </xpath>
+        </template>
+    </data>
+</odoo>
+
+ 
+ 
+ 
+ 
+ 

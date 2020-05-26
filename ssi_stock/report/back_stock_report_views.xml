@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record model="ir.ui.view" id="attendance_report_tree_view">
+	  <field name="name">back_stock_report.tree</field>
+	  <field name="model">back.stock.report</field>
+	  <field name="arch" type="xml">
+		<tree string="Back Stock">
+			<field name="product_id"/>
+			<field name="status"/>
+			<field name="qty_oh"/>
+			<field name="qty_ord"/>
+			<field name="qty_rsv"/>
+			<field name="qty_po"/>
+			<field name="primary_location"/>
+			<field name="qty_prm"/>
+			<field name="secondary_location"/>
+			<field name="qty_sec"/>
+		</tree>
+	  </field>
+	</record>
+	
+    <record id="back_stock_search" model="ir.ui.view">
+        <field name="name">back_stock.report.search</field>
+        <field name="model">back.stock.report</field>
+        <field name="arch" type="xml">
+        <search string="Search Back Stock">
+            <filter domain="[['secondary_location','ilike','WH/50']]" name="back_stock_filter" string="Back Stock"/>
+        </search>
+        </field>
+    </record>
+
+	<record 
+	model="ir.actions.act_window" 
+	id="back_stock_report_view">
+	  <field name="name">Back Stock Report</field>
+	  <field name="res_model">back.stock.report</field>
+	  <field name="view_mode">tree,form</field>
+	</record>
+
+	<menuitem 
+	id="menu_back_stock_report_view"
+	parent="stock.menu_warehouse_report" 
+	name="Back Stock Report" 
+	sequence="90" 
+	action="back_stock_report_view"/>
+
+
+</odoo>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="auth_signup_custom_fields" inherit_id="auth_signup.fields" name="Signup Custom Fields">
+            <xpath expr="//div[hasclass('field-login')]" position="replace">
+								<div class="form-group field-login">
+										<label for="login">Your Email</label>
+										<input type="email" name="login" id="login" class="form-control form-control-sm" autofocus="autofocus" autocapitalize="off" required="required" maxlength="50" />
+								</div>
+						</xpath>
+						<xpath expr="//div[hasclass('field-name')]" position="after">
+                <div t-if="not only_passwords" class="form-group field-company_name">
+                    <label for="company_name" class="control-label">School/Company Name</label>
+                    <input type="text" name="company_name" t-att-value="company_name" id="company_name" class="form-control" maxlength="35" t-att-readonly="'readonly' if only_passwords else None"
+	                t-att-autofocus="'autofocus' if login and not only_passwords else None" />
+                </div>
+						</xpath>
+            <xpath expr="//div[hasclass('field-confirm_password')]" position="after">
+                <div t-if="not only_passwords" class="form-group field-street_name">
+                    <label for="street" class="control-label">Street</label>
+                    <input type="text" name="street" t-att-value="street" id="street" class="form-control" required="required" maxlength="35" t-att-readonly="'readonly' if only_passwords else None"
+	                t-att-autofocus="'autofocus' if login and not only_passwords else None" />
+                </div>
+                <div t-if="not only_passwords" class="form-group field-street">
+                    <label for="street2" class="control-label">Street 2</label>
+                    <input type="text" name="street2" t-att-value="street2" id="street2" class="form-control" maxlength="35" t-att-readonly="'readonly' if only_passwords else None"
+	                t-att-autofocus="'autofocus' if login and not only_passwords else None" />
+                </div>
+                <div t-if="not only_passwords" class="form-group field-city">
+                    <label for="city" class="control-label">City</label>
+                    <input type="text" name="city" t-att-value="city" id="city" class="form-control" required="required" maxlength="30" t-att-readonly="'readonly' if only_passwords else None"
+	                t-att-autofocus="'autofocus' if login and not only_passwords else None" />
+                </div>
+                <div t-if="not only_passwords" class="form-group field-country">
+                    <label for="state_id" class="control-label">State</label>
+                    <select name="state_id" class="form-control" t-att-value="state_id" required="required" t-att-readonly="'readonly' if only_passwords else None"
+	                    t-att-autofocus="'autofocus' if login and not only_passwords else None">
+                        <option value="">Select</option>
+                        <t t-foreach="states or []" t-as="state">
+                            <option t-att-value="state.id">
+                                <t t-esc="state.name" />
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div t-if="not only_passwords" class="form-group field-zip">
+                    <label for="zip" class="control-label">Zip</label>
+                    <input type="text" name="zip" id="zip" class="form-control" required="required" t-att-readonly="'readonly' if only_passwords else None"
+	                t-att-autofocus="'autofocus' if login and not only_passwords else None" />
+                </div>
+                <div t-if="not only_passwords" class="form-group field-country o_website_form_field_hidden">
+                    <input type="text" name="country_id" value="233"/>
+								</div>
+                <div t-if="not only_passwords" class="form-group field-phone">
+                    <label for="phone" class="control-label">Phone</label>
+                    <input type="text" name="phone" t-att-value="phone" id="phone" class="form-control" required="required" t-att-readonly="'readonly' if only_passwords else None"
+	                t-att-autofocus="'autofocus' if login and not only_passwords else None" />
+                </div>
+                <div t-if="not only_passwords" class="form-group field-tax_cert">
+                    <label for="x_studio_tax_exempt" class="control-label">Tax Exempt?</label> <br/>
+                    <input type="checkbox" class="o_website_form_input" name="x_studio_tax_exempt" value="Yes"/>
+                    <span>(Please check if you are Tax Exempt)</span>
+								</div>
+                <div t-if="not only_passwords" class="form-group field-vat">
+                    <label for="vat" class="control-label">Tax ID</label>
+                    <input type="text" name="vat" t-att-value="vat" id="vat" class="form-control" t-att-readonly="'readonly' if only_passwords else None"
+	                t-att-autofocus="'autofocus' if login and not only_passwords else None" />
+                </div>
+								<div t-if="not only_passwords" class="form-group form-field">
+										<label class="col-form-label" for="x_studio_tax_certificate">
+												Tax Certificate
+										</label>
+										<input type="file" class="form-control o_website_form_input" name="x_studio_tax_certificate"/>
+								</div>
+						</xpath>
+        </template>
+
+		<template id="address_signup" inherit_id="website_sale.address" name="Show Extra Address fields" active="True">
+			<xpath expr="//div[hasclass('form-row')]" position="replace">
+			<div class="form-row">
+				<div t-attf-class="form-group #{error.get('name') and 'o_has_error' or ''} col-lg-12 div_name">
+					<label class="col-form-label" for="name">Name</label>
+					<input type="text" name="name" t-attf-class="form-control #{error.get('name') and 'is-invalid' or ''}" t-att-value="'name' in checkout and checkout['name']" />
+				</div>
+                <div t-attf-class="form-group #{error.get('company_name') and 'o_has_error' or ''} col-lg-12">
+                    <label class="col-form-label font-weight-normal label-optional" for="company_name">School / Company Name</label>
+                    <input type="text" name="company_name" t-attf-class="form-control #{error.get('company_name') and 'is-invalid' or ''}" t-att-value="'company_name' in checkout and checkout['company_name']" t-att-readonly="'1' if 'vat' in checkout and checkout['vat'] and not can_edit_vat else None" t-att-title="'Changing company name is not allowed once document(s) have been issued for your account. Please contact us directly for this operation.' if 'vat' in checkout and checkout['vat'] and not can_edit_vat else None"/>
+                </div>
+				<div class="w-100"/>
+				<t t-if="mode[1] == 'billing'">
+					<div t-attf-class="form-group #{error.get('email') and 'o_has_error' or ''} col-lg-6" id="div_email">
+						<label class="col-form-label" for="email">Email</label>
+						<input type="email" name="email" t-attf-class="form-control #{error.get('email') and 'is-invalid' or ''}" t-att-value="'email' in checkout and checkout['email']" />
+					</div>
+				</t>
+				<div t-attf-class="form-group #{error.get('phone') and 'o_has_error' or ''} col-lg-6" id="div_phone">
+					<label class="col-form-label" for="phone">Phone</label>
+					<input type="tel" name="phone" t-attf-class="form-control #{error.get('phone') and 'is-invalid' or ''}" t-att-value="'phone' in checkout and checkout['phone']" />
+				</div>
+				<div class="w-100"/>
+				<div t-attf-class="form-group #{error.get('street') and 'o_has_error' or ''} col-lg-12 div_street">
+					<label class="col-form-label" for="street">Street <span class="d-none d-md-inline"> and Number</span></label>
+					<input type="text" name="street" t-attf-class="form-control #{error.get('street') and 'is-invalid' or ''}" t-att-value="'street' in checkout and checkout['street']" />
+				</div>
+				<div t-attf-class="form-group #{error.get('street2') and 'o_has_error' or ''} col-lg-12 div_street2">
+					<label class="col-form-label label-optional" for="street2">Street 2</label>
+					<input type="text" name="street2" t-attf-class="form-control #{error.get('street2') and 'is-invalid' or ''}" t-att-value="'street2' in checkout and checkout['street2']" />
+				</div>
+				<div class="w-100"/>
+				<div t-attf-class="form-group #{error.get('city') and 'o_has_error' or ''} col-lg-6 div_city">
+					<label class="col-form-label" for="city">City</label>
+					<input type="text" name="city" t-attf-class="form-control #{error.get('city') and 'is-invalid' or ''}" t-att-value="'city' in checkout and checkout['city']" />
+				</div>
+				<div t-attf-class="form-group col-lg-6">
+					<label class="col-form-label" for="state_id">State </label>
+					<select name="state_id" t-attf-class="form-control #{error.get('state_id') and 'is-invalid' or ''}" data-init="1">
+						<option value="">State</option>
+						<t t-foreach="country and country.state_ids or []" t-as="s">
+							<option t-att-value="s.id" t-att-selected="s.id == ('state_id' in checkout and country and checkout['state_id'] != '' and int(checkout['state_id']))">
+								<t t-esc="s.name" />
+							</option>
+						</t>
+					</select>
+				</div>
+				<div class="w-100"/>
+				<t t-set='zip_city' t-value='country and [x for x in country.get_address_fields() if x in ["zip", "city"]] or ["city", "zip"]'/>
+				<t t-if="'zip' in zip_city and zip_city.index('zip') &lt; zip_city.index('city')">
+					<div t-attf-class="form-group #{error.get('zip') and 'o_has_error' or ''} col-md-4 div_zip">
+						<label class="col-form-label label-optional" for="zip">Zip Code</label>
+						<input type="text" name="zip" t-attf-class="form-control #{error.get('zip') and 'is-invalid' or ''}" t-att-value="'zip' in checkout and checkout['zip']" />
+					</div>
+				</t>
+				<t t-if="'zip' in zip_city and zip_city.index('zip') &gt; zip_city.index('city')">
+					<div t-attf-class="form-group #{error.get('zip') and 'o_has_error' or ''} col-md-4 div_zip">
+						<label class="col-form-label label-optional" for="zip">Zip Code</label>
+						<input type="text" name="zip" t-attf-class="form-control #{error.get('zip') and 'is-invalid' or ''}" t-att-value="'zip' in checkout and checkout['zip']" />
+					</div>
+				</t>
+				<!-- div t-attf-class="form-group col-lg-6">
+					<label class="col-form-label" for="country_id">Country</label>
+					<select id="country_id" name="country_id" t-attf-class="form-control">
+                            <option value="233" selected="True">
+								United States
+							</option>
+					</select>
+				</div -->
+				<input type="hidden" name="country_id"  value="233"/>
+                <div class="w-100"/>
+				<div t-attf-class="form-group #{error.get('tax_cert') and 'o_has_error' or ''} col-lg-6" id="div_tax_cert">
+				  <label class="col-form-label" for="tax_cert">
+                    <input type="checkbox" class="o_website_form_input" name="x_studio_tax_exempt" value="Y"/>
+                    <span>Tax Exempt</span>
+                  </label>
+				</div>
+				<div t-attf-class="form-group #{error.get('vat') and 'o_has_error' or ''} col-lg-6" id="div_vat">
+                    <label for="vat" class="col-form-label">Tax ID</label>
+                    <input type="text" name="vat" t-att-value="vat" id="vat" class="form-control"/>
+                </div>
+				<div class="w-100"/>
+				<t t-if="mode == ('new', 'billing') and not only_services">
+					<div class="col-lg-12">
+						<div class="checkbox">
+						  <label>
+							<input type="checkbox" id='shipping_use_same' class="mr8" name='use_same' value="1" checked='checked'/>Ship to the same address
+							<span class='ship_to_other text-muted' style="display: none">&amp;nbsp;(<i>Your shipping address will be requested later) </i></span>
+							</label>
+						</div>
+					</div>
+				</t>
+			</div>
+			</xpath>
+		</template>
+    </data>
+</odoo>

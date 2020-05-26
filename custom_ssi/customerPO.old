@@ -1,0 +1,53 @@
+# -*- coding: utf-8 -*-
+from odoo import fields, models, api, exceptions
+
+class CustomerPO(models.Model):
+    _inherit = 'sale.order'
+
+    client_order_ref =  fields.Char(string='Customer PO');
+
+    state = fields.Selection([
+        ('draft', 'Quotation'),
+        ('sent', 'Quotation Sent'),
+        ('sale', 'Sales Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled'),
+        ('saved', 'Saved'),
+    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', track_sequence=3, default='draft')
+		
+    @api.onchange('client_order_ref')
+    def _check_duplicates(self):
+        duplicates = self.env['sale.order'].search([
+            ('client_order_ref','=', self.client_order_ref),
+            ('name', '!=', self.name)
+        ])
+        # ('partner_id.name','=', self.partner_id.name),    // took out partner check on PO
+
+				# if isinstance(duplicates, list):
+        for d in duplicates:
+          if str(d.id) != 'False' and self.client_order_ref:
+            return {
+                'warning': {'title': "Warning", 'message': "This Purchase Order reference already exists for this customer. Sale Order ->  " + str(d.name)},
+            }
+        # elif str(duplicates.id) != 'False':
+        #     return {
+        #         'warning': {'title': "Warning", 'message': "This Purchase Order reference already exists for this customer. Sale Order ->  " + str(duplicates.name)},
+        #     }
+
+
+
+
+        # duplicate = self.env['sale.order'].search([
+        #     ('client_order_ref','=', self.client_order_ref),
+        #     ('name', '!=', self.name)
+        # ])
+        # if str(duplicate.id) != 'False':
+        #     raise exceptions.ValidationError("This Purchase Order reference already exists. customer -> "+
+        #         str(duplicate.partner_id.name) +" ; Sale Order ->  " +
+        #         str(duplicate.name))
+
+
+        # WORKS TOO >>>> Chad
+        # duplicate = self.env['sale.order'].browse([('user_id.name','=', self.user_id.name)])
+        # if self.client_order_ref == self.client_order_ref:
+        #     raise exceptions.ValidationError("Customer already belongs to  ")

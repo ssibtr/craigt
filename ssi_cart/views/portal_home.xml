@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_home_sale" name="Portal Home Sale" inherit_id="portal.portal_my_home">
+            <xpath expr="//div[hasclass('o_portal_approval')]" position="inside">
+              <t t-if="cart_count" t-call="portal.portal_docs_entry">
+                  <t t-set="title">Saved Carts</t>
+                  <t t-set="url" t-value="'/my/saved'"/>
+                  <t t-set="count" t-value="cart_count"/>
+              </t>
+              <t t-if="approval_count" t-call="portal.portal_docs_entry">
+                  <t t-set="title">Orders</t>
+                  <t t-set="url" t-value="'/my/approval'"/>
+                  <t t-set="count" t-value="approval_count"/>
+              </t>
+              <t t-if="pending_count" t-call="portal.portal_docs_entry">
+                  <t t-set="title">Pending Approval</t>
+                  <t t-set="url" t-value="'/my/pending'"/>
+                  <t t-set="count" t-value="pending_count"/>
+              </t>
+              <t t-if="approved_count" t-call="portal.portal_docs_entry">
+                  <t t-set="title">Approved Orders</t>
+                  <t t-set="url" t-value="'/my/approved'"/>
+                  <t t-set="count" t-value="approved_count"/>
+              </t>
+                <t t-if="invoice_count and approval_role == 'admin'" t-call="portal.portal_docs_entry">
+                    <t t-set="title">Invoices</t>
+                    <t t-set="url" t-value="'/my/invoices'"/>
+                    <t t-set="count" t-value="invoice_count"/>
+                </t>
+
+            </xpath>
+        </template>
+    </data>
+</odoo>
+
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,107 @@
+from odoo import http
+from odoo.http import request
+from odoo.addons.website_sale.controllers.main import Website
+from werkzeug.routing import Map, Rule, NotFound, RequestRedirect
+from odoo.addons.website_sale.controllers import main
+import werkzeug
+import json
+from collections import deque
+from odoo.tools import ustr
+from odoo.tools.misc import xlwt
+import datetime
+
+class Website(Website):
+
+    @http.route(['/web/buyreport'], 
+        type='http', 
+        methods=['GET'], 
+        csrf=False)
+    def buyreport(self,  **args):
+        # DO BOTH QUERY AND JOIN THEM AFTER
+        products = request.env['product.product'].sudo().search([('sale_ok', '=', True)], limit= 50)
+
+#         string = ''
+#         for p in products:      
+#           sales = request.env['sale.report'].sudo().read_group(
+#                   domain=[('product_id', '!=', p.id)],
+#                   fields=['product_uom_qty', 'confirmation_date', 'product_id'], 
+#                   groupby=['confirmation_date:week']
+#               )
+        
+#           string = p.name + ' => ' + json.dumps(sales[-1]) + '<br/>'
+#           return string
+        #   for s in sales:
+        #     return str(s['product_uom_qty'])
+        myHeaders = [
+            'EDP No', 'Internal Reference','Vendors/Vendor/Display Name',
+            'Status', 'Cost', 'Quantity On Hand', 'On PO', 'Outgoing', 'Forecasted Quantity', 
+            'W0', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9',
+            'W10', 'W11', 'W12', 'W13', 'W14', 'W15', 'W16', 'W17', 'W18', 'W19',
+            'W20', 'W21', 'W22', 'W23', 'W24', 'W25', 'W26', 'W27', 'W28', 'W29',
+            'W30', 'W31', 'W32', 'W33', 'W34', 'W35', 'W36', 'W37', 'W38', 'W39',
+            'W40', 'W41', 'W42', 'W43', 'W44', 'W45', 'W46', 'W47', 'W48', 'W49',
+            'W50', 'W51', 'W52'
+        ]
+
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet('Buy Report')
+        row = 0
+        col = 0
+
+        for header in myHeaders:
+          worksheet.write(col , row, header)
+          row = row + 1
+
+        col = 1
+        for p in products:  
+          row = 0    
+          sales = request.env['sale.report'].sudo().read_group(
+                  domain=[('product_id', '=', p.id)],
+                  fields=['product_uom_qty', 'confirmation_date', 'product_id'], 
+                  groupby=['confirmation_date:week']
+              )
+
+          roundedCost = str(round(p.standard_price, 2))
+          if(len(roundedCost.split(".",1)[1]) < 2):
+            roundedCost = roundedCost + '0'
+          
+          vendor = ''
+          try:
+            vendor = str(p.seller_ids[0].display_name)
+          except IndexError:
+            pass
+          
+          currentRow = [
+            str(p.x_edpno),  str(p.default_code), vendor,
+            str(p.x_status), roundedCost, 
+            str(p.qty_available), str(p.incoming_qty), 
+            str(p.outgoing_qty), str(p.virtual_available)
+          ]
+
+          for currentColumn in currentRow:
+            worksheet.write(col , row, currentColumn)
+            row = row + 1
+
+          now = datetime.datetime.now()
+          currentWeek = datetime.date(now.year, now.month, now.day).isocalendar()[1]
+
+          for s in sales:
+            if(s['confirmation_date:week']):
+              try:
+                if (str(s['confirmation_date:week'].split(" ",1)[1]) == str(now.year)):
+                  weekIndex = int(currentWeek) - int(s['confirmation_date:week'].split(" ",1)[0][1:2]) + 9
+                else:
+                  weekIndex = int(currentWeek) - int(s['confirmation_date:week'].split(" ",1)[0][1:2]) + 52 + 9
+              except:
+                return str(s)
+              string = str(s['product_uom_qty'])
+              try:
+                worksheet.write(col , weekIndex, string)
+
+          col = col + 1
+
+        response = request.make_response(None, headers=[('Content-Type', 'application/vnd.ms-excel'), ('Content-Disposition', 'attachment; filename=table.xls')], cookies={'fileToken': 'token'})
+        workbook.save(response.stream)
+
+        return response
+
